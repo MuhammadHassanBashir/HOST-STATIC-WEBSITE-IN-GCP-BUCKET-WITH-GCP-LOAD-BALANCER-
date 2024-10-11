@@ -361,7 +361,7 @@ The output confirmed that the bucket wasn't public. To resolve this, I made the 
 
     gcloud storage buckets add-iam-policy-binding gs://ask-angie-frontend --member=allUsers --role=roles/storage.objectViewer
 
-After re-running gsutil iam get gs://ask-angie-frontend, I confirmed that the bucket was now public, as the allUsers member was granted the roles/storage.objectViewer role. I also verified this through the Cloud Console.
+After re-running **gsutil iam get gs://ask-angie-frontend**, I confirmed that the bucket was now public, as the allUsers member was granted the **roles/storage.objectViewer** role. I also verified this through the Cloud Console.
 
 **Configuring the Application Load Balancer**
 
