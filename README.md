@@ -381,11 +381,11 @@ With the bucket publicly accessible, the next step was to configure the Applicat
 
     Since the static content was located in the build folder (and not the root), I needed to configure host and path rules. This was crucial because the static content, including the index.html file, wasn't directly accessible from the root path.
     
-    I set up the following rule:
-    Host: askangie.disearch.ai (the domain through which traffic would be routed)
-    Path: /build/* (to point traffic to the build folder)
-    Backend: The backend bucket I had configured earlier.
-    Alternatively, to route all traffic to the bucket, I set the path rule as /*.
+        I set up the following rule:
+        Host: askangie.disearch.ai (the domain through which traffic would be routed)
+        Path: /build/* (to point traffic to the build folder)
+        Backend: The backend I had configured earlier in loadbalancer.
+        Alternatively, to route all traffic to the bucket, I set the path rule as /*.
 
 **DNS Configuration and Testing**
     
