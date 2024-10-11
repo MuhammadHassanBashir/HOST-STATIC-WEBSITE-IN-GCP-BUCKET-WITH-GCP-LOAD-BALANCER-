@@ -410,7 +410,7 @@ I verified the move by listing the contents of the bucket with gsutil ls and als
 3- Set index.html as Default: To ensure that visiting the domain would automatically load the index.html page, I configured the bucket's website settings:
 
     In the Google Cloud Console, I navigated to the Buckets section.
-    I selected the ask-angie-frontend bucket and clicked on Edit website configuration.
+    I selected the ask-angie-frontend bucket and clicked on **Edit website configuration**.
     I specified index.html as the MainPageSuffix and saved the settings.
 
 **Final Testing**
