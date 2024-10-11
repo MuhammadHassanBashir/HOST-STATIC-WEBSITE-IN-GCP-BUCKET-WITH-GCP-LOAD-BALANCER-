@@ -107,6 +107,28 @@ Terraform:
 
 REST API (JSON):
 
+    curl -X POST --data-binary @index.html \
+      -H "Content-Type: text/html" \
+      -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+      "https://storage.googleapis.com/upload/storage/v1/b/my-static-assets/o?uploadType=media&name=index.html"
+
+## Step:2 Share your files
+
+To make all objects in your bucket readable to anyone on the public internet:
+
+In the Google Cloud console, go to the Cloud Storage Buckets page.
+
+- Go to Buckets
+- In the list of buckets, click the name of the bucket that you want to make public.
+- Select the Permissions tab near the top of the page.
+- If the Public access pane reads Not public, click the button labeled Remove public access prevention and click Confirm in the dialog that appears.
+- Click the add_box Grant access button.
+- The Add principals dialog box appears.
+- In the New principals field, enter allUsers.
+- In the Select a role drop down, select the Cloud Storage sub-menu, and click the Storage Object Viewer option.
+- Click Save.
+- Click Allow public access.
+
 
 
 
