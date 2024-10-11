@@ -343,3 +343,78 @@ Go to External IP addresses
 - Select the checkboxes next to example-ip.
 - Click Release static address.
 - In the confirmation window, click Delete.
+
+
+## DEPLOYMENT AND LEARNING STEP
+
+Deployment of Static Website on Google Cloud with Application Load Balancer and SSL
+
+I was tasked with deploying a static website for the development team, who had created a GCP bucket named ask-angie-frontend containing a build folder with static content. My objective was to host this content on Google Cloud with proper HTTPS routing and an SSL certificate using an Application Load Balancer.
+
+Initial Steps: Making the Bucket Public
+
+To begin, I needed to ensure that the bucket was publicly accessible. Unfortunately, the Google Cloud Console wasn't providing clear information on the bucket's public status. To verify this, I used the following command:
+
+    gsutil iam get gs://ask-angie-frontend
+
+The output confirmed that the bucket wasn't public. To resolve this, I made the bucket publicly accessible using the following command (this can also be done via the Google Cloud Console UI):
+
+    gcloud storage buckets add-iam-policy-binding gs://ask-angie-frontend --member=allUsers --role=roles/storage.objectViewer
+
+After re-running gsutil iam get gs://ask-angie-frontend, I confirmed that the bucket was now public, as the allUsers member was granted the roles/storage.objectViewer role. I also verified this through the Cloud Console.
+
+Configuring the Application Load Balancer
+
+With the bucket publicly accessible, the next step was to configure the Application Load Balancer (ALB) to serve the content. I handled the following aspects of the load balancer setup:
+
+1. Frontend Configuration (SSL & IP Reservation)
+
+    First, I reserved a static IP for the load balancer.
+    I created a Google-managed SSL certificate and configured HTTP to HTTPS redirection, ensuring secure traffic distribution.
+
+2. Backend Configuration
+    
+    I created a backend bucket in the load balancer configuration, linking it to the ask-angie-frontend bucket, which contained the static content.
+    I selected the build folder as the location of the content, setting it as the source for the load balancer’s backend.
+
+3. Host and Path Rules
+
+    Since the static content was located in the build folder (and not the root), I needed to configure host and path rules. This was crucial because the static content, including the index.html file, wasn't directly accessible from the root path.
+    
+    I set up the following rule:
+    Host: askangie.disearch.ai (the domain through which traffic would be routed)
+    Path: /build/* (to point traffic to the build folder)
+    Backend: The backend bucket I had configured earlier.
+    Alternatively, to route all traffic to the bucket, I set the path rule as /*.
+
+DNS Configuration and Testing
+    
+    Once the load balancer was configured, I obtained the load balancer's IP address. I updated the domain's DNS settings in Google Cloud DNS, pointing askangie.disearch.ai to the load balancer IP.
+
+    After waiting for SSL certificate provisioning, I tested the domain in the browser. The content was served, but I noticed that the index.html page wasn't accessible directly and required the full path (https://askangie.disearch.ai/build/index.html).
+
+Resolving Folder Structure Issue
+
+    A colleague suggested moving the contents of the build folder to the root of the bucket for better accessibility. I followed these steps to achieve this:
+
+1- Backup the build Folder Locally: I took a backup of the build folder before making any changes, just to ensure no data was lost:
+
+    gsutil -m cp -r gs://ask-angie-frontend/build /home/hassan/Project/hosting-static-website/build
+
+2- Move Content to Bucket Root: I moved the contents of the build folder to the root of the bucket using this command:
+
+    gsutil -m mv gs://ask-angie-frontend/build/* gs://ask-angie-frontend/
+
+I verified the move by listing the contents of the bucket with gsutil ls and also checked via the Google Cloud Console.
+
+3- Set index.html as Default: To ensure that visiting the domain would automatically load the index.html page, I configured the bucket's website settings:
+
+    In the Google Cloud Console, I navigated to the Buckets section.
+    I selected the ask-angie-frontend bucket and clicked on Edit website configuration.
+    I specified index.html as the MainPageSuffix and saved the settings.
+
+Final Testing
+
+    After all the configurations, I re-tested the domain, and it successfully routed traffic to the index.html page without requiring the full path. The static website was now fully functional with HTTPS, and the load balancer was efficiently managing secure traffic distribution.
+
+
